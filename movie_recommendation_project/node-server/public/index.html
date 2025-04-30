@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Movie Recommendation System</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div>
+        <h1>Movie Recommendation System</h1>
+    </div>
+
+    <div>
+        <h3>This is an end-to-end project that I have been working on for some time - I hope you get some use out of it and enjoy!</h3><br><br>
+    </div>
+
+    <div>
+        <form id="recommendationForm">
+            <center>
+            <label for="listInput">Please Enter a Couple of your Favorite Films (comma-separated):</label><br><br>
+            <input type="text" id="listInput" name="list"><br><br>
+            <input type="submit" value="Get Recommendations">
+            </center>
+        </form>
+        <div id="results" style="margin-top: 30px; text-align: center;"></div>
+    </div>
+
+    <script>
+        document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('listInput').value;
+
+            const response = await fetch('/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ input })
+            });
+
+            const data = await response.json();
+            const resultDiv = document.getElementById('results');
+
+            if (data.recommendations) {
+                resultDiv.innerHTML = `<h3>Recommendations:</h3><div class="rec-output">${data.recommendations.map(r => `<div>${r}</div>`).join('')}</div>`;
+                resultDiv.classList.add("visible");
+            } else {
+                resultDiv.innerHTML = `<p>No recommendations found.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

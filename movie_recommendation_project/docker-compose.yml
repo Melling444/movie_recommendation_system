@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  node:
+    build: ./node-server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - python
+    networks:
+      - app-network
+
+  python:
+    build: ./python-app  # Make sure this points to the correct directory
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
