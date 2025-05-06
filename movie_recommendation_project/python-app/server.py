@@ -142,13 +142,13 @@ def get_recommendations(title, cosine_sim = cosine_sim):
     invalid_titles = [t for t in normalize_titles if t not in indices.index]
 
     if not valid_titles:
-        return ["Movie not found"]
+        return {"error": "Movie not found"}
     new = []
     for i in valid_titles:
         idx = indices[i]
         sim_scores = list(enumerate(cosine_sim[idx]))
         sim_scores = sorted(sim_scores, key = lambda x: x[1], reverse = True)  
-        sim_scores = sim_scores[1:6]
+        sim_scores = sim_scores[1:7]
         new.extend(sim_scores)
     
     unique = {}
@@ -158,9 +158,18 @@ def get_recommendations(title, cosine_sim = cosine_sim):
     
     sorted_indices = sorted(unique.items(), key = lambda x: x[1], reverse = True)
     final_indices = [idx for idx, score in sorted_indices]
-    final_indices = final_indices[:5]
+    final_indices = final_indices[:6]
 
-    return df['Movie Title'].iloc[final_indices].tolist()
+    print_list = []
+
+    for i in final_indices:
+        print_list.append({
+            "title": df['Movie Title'].iloc[i],
+            "synopsis": df['Synopsis'].iloc[i],
+            "genre": ', '.join(df.iloc[i]["Genre"]) if isinstance(df.iloc[i]["Genre"], list) else df.iloc[i]["Genre"]
+        })
+
+    return {"recommendations": print_list}
 
 soup_list = ['Cast', 'Director', 'Producer', 'Screenwriter', 'Genre', 'keywords']
 
@@ -203,7 +212,7 @@ def recommend():
 
     input_list = [item.strip() for item in input_string.split(',')]
     recommendations = get_recommendations(title=input_list, cosine_sim=cosine_sim2)
-    return jsonify({'recommendations': recommendations})
+    return jsonify(recommendations)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
