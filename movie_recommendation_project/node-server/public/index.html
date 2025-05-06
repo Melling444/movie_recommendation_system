@@ -15,36 +15,64 @@
 
     <div>
         <form id="recommendationForm">
-            <center>
-            <label for="listInput">Please Enter a Couple of your Favorite Films (comma-separated):</label><br><br>
-            <input type="text" id="listInput" name="list"><br><br>
-            <input type="submit" value="Get Recommendations">
-            </center>
+            <div class="form-wrapper">
+                <label for="listInput">Please Enter a Couple of your Favorite Films (comma-separated):</label><br><br>
+                <input type="text" id="listInput" name="list"><br><br>
+                <input type="submit" value="Get Recommendations">
+            </div>
         </form>
-        <div id="results" style="margin-top: 30px; text-align: center;"></div>
+
+        <div id="results" class="recommendation-grid"></div>
+
+        <div id="search-again-container" style="margin-top: 30px; display: none;">
+            <button id="search-again-button">Search Again</button>
+        </div>
     </div>
 
     <script>
-        document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = document.getElementById('listInput').value;
+    document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('listInput').value;
 
-            const response = await fetch('/recommend', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ input })
-            });
-
-            const data = await response.json();
-            const resultDiv = document.getElementById('results');
-
-            if (data.recommendations) {
-                resultDiv.innerHTML = `<h3>Recommendations:</h3><div class="rec-output">${data.recommendations.map(r => `<div>${r}</div>`).join('')}</div>`;
-                resultDiv.classList.add("visible");
-            } else {
-                resultDiv.innerHTML = `<p>No recommendations found.</p>`;
-            }
+        const response = await fetch('/recommend', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ input })
         });
+
+        const data = await response.json();
+        const resultDiv = document.getElementById('results');
+        const searchAgainBtn = document.getElementById('search-again-container');
+        searchAgainBtn.style.display = 'none';
+
+
+        resultDiv.innerHTML = '';
+        resultDiv.classList.add("visible");
+
+        if (data.error) {
+            resultDiv.innerHTML = `<p>${data.error}</p>`;
+            searchAgainBtn.style.display = 'block';
+        } else if (data.recommendations) {
+            data.recommendations.forEach(r => {
+                const card = document.createElement('div');
+                card.className = 'rec-card';
+                card.innerHTML = `
+                    <strong>${r.title}</strong>
+                    <p><em>${r.genre}</em></p>
+                    <p>${r.synopsis}</p>`;
+                resultDiv.appendChild(card);
+            });
+            searchAgainBtn.style.display = 'block';
+        }
+    });
+
+    // Moved outside submit handler
+    document.getElementById('search-again-button').addEventListener('click', () => {
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('results').classList.remove('visible');
+        document.getElementById('listInput').value = '';
+        document.getElementById('search-again-container').style.display = 'none';
+    });
     </script>
 </body>
 </html>
