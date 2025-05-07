@@ -18,8 +18,7 @@ app.post('/recommend', async (req, res) => {
             input: input
         });
 
-        const recommendations = response.data.recommendations;
-        res.json({ recommendations });
+        res.json(response.data);
 
     } catch (error) {
         console.error('Error calling Python service:', error.message);
