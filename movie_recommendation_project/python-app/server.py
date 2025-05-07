@@ -168,8 +168,8 @@ def get_recommendations(title, cosine_sim = cosine_sim):
             "synopsis": df['Synopsis'].iloc[i],
             "genre": ', '.join(df.iloc[i]["Genre"]) if isinstance(df.iloc[i]["Genre"], list) else df.iloc[i]["Genre"]
         })
-
-    return {"recommendations": print_list}
+    original_titles = [df.loc[indices[t]].get("Movie Title", t) for t in valid_titles]
+    return {"recommendations": print_list, "used_titles": original_titles}
 
 soup_list = ['Cast', 'Director', 'Producer', 'Screenwriter', 'Genre', 'keywords']
 
@@ -211,8 +211,14 @@ def recommend():
         return jsonify({'error': 'No input provided'}), 400
 
     input_list = [item.strip() for item in input_string.split(',')]
-    recommendations = get_recommendations(title=input_list, cosine_sim=cosine_sim2)
-    return jsonify(recommendations)
+    result = get_recommendations(title=input_list, cosine_sim=cosine_sim2)
+
+    response = {
+        "recommendations": result.get("recommendations", []),
+        "used_titles": result.get("used_titles", [])
+    }
+
+    return jsonify(response)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
