@@ -10,69 +10,92 @@
     </div>
 
     <div>
-        <h3>This is an end-to-end project that I have been working on for some time - I hope you get some use out of it and enjoy!</h3><br><br>
+        <h3>This is an end-to-end project that I have been working on for some time — I hope you get some use out of it and enjoy!</h3><br><br>
     </div>
 
-    <div>
-        <form id="recommendationForm">
-            <div class="form-wrapper">
-                <label for="listInput">Please Enter a Couple of your Favorite Films (comma-separated):</label><br><br>
-                <input type="text" id="listInput" name="list"><br><br>
-                <input type="submit" value="Get Recommendations">
-            </div>
-        </form>
-
-        <div id="results" class="recommendation-grid"></div>
-
-        <div id="search-again-container" style="margin-top: 30px; display: none;">
-            <button id="search-again-button">Search Again</button>
+    <form id="recommendationForm">
+        <div class="form-wrapper">
+            <label for="listInput">Please Enter a Couple of your Favorite Films (comma-separated):</label><br><br>
+            <input type="text" id="listInput" name="list"><br><br>
+            <input type="submit" value="Get Recommendations">
         </div>
+    </form>
+
+    <!-- Results section -->
+    <div id="results-wrapper">
+        <h2 id="recommendation-heading" style="display: none;"></h2>
+        <div id="results" class="recommendation-grid"></div>
+    </div>
+
+    <!-- Search again button -->
+    <div id="search-again-container" style="margin-top: 30px; display: none;">
+        <button id="search-again-button">Search Again</button>
     </div>
 
     <script>
-    document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const input = document.getElementById('listInput').value;
-
-        const response = await fetch('/recommend', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ input })
-        });
-
-        const data = await response.json();
-        const resultDiv = document.getElementById('results');
-        const searchAgainBtn = document.getElementById('search-again-container');
-        searchAgainBtn.style.display = 'none';
-
-
-        resultDiv.innerHTML = '';
-        resultDiv.classList.add("visible");
-
-        if (data.error) {
-            resultDiv.innerHTML = `<p>${data.error}</p>`;
-            searchAgainBtn.style.display = 'block';
-        } else if (data.recommendations) {
-            data.recommendations.forEach(r => {
-                const card = document.createElement('div');
-                card.className = 'rec-card';
-                card.innerHTML = `
-                    <strong>${r.title}</strong>
-                    <p><em>${r.genre}</em></p>
-                    <p>${r.synopsis}</p>`;
-                resultDiv.appendChild(card);
+        document.getElementById('recommendationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('listInput').value;
+        
+            const response = await fetch('/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ input })
             });
-            searchAgainBtn.style.display = 'block';
-        }
-    });
-
-    // Moved outside submit handler
-    document.getElementById('search-again-button').addEventListener('click', () => {
-        document.getElementById('results').innerHTML = '';
-        document.getElementById('results').classList.remove('visible');
-        document.getElementById('listInput').value = '';
-        document.getElementById('search-again-container').style.display = 'none';
-    });
+        
+            const data = await response.json();
+            console.log("Full server response:", data);
+            console.log("🎯 Used titles from server:", data.used_titles);
+            const resultDiv = document.getElementById('results');
+            const heading = document.getElementById('recommendation-heading');
+            const searchAgainBtn = document.getElementById('search-again-container');
+        
+            // Clear previous content
+            resultDiv.innerHTML = '';
+            heading.textContent = '';
+            heading.style.display = 'none';
+            resultDiv.classList.add("visible");
+        
+            // Show error if any
+            if (data.error) {
+                resultDiv.innerHTML = `<p>${data.error}</p>`;
+                searchAgainBtn.style.display = 'block';
+                return;
+            }
+        
+            // ✅ Pull used_titles safely
+            const usedTitles = data.used_titles || [];
+        
+            // ✅ Set and show heading
+            heading.textContent = usedTitles.length > 0
+                ? `Recommended for You Based on: ${usedTitles.join(', ')}`
+                : 'Recommended for You';
+            heading.style.display = 'block';
+        
+            // Add recommendations
+            if (Array.isArray(data.recommendations) && data.recommendations.length > 0) {
+                data.recommendations.forEach(r => {
+                    const card = document.createElement('div');
+                    card.className = 'rec-card';
+                    card.innerHTML = `
+                        <strong>${r.title}</strong>
+                        <p><em>${r.genre}</em></p>
+                        <p>${r.synopsis}</p>`;
+                    resultDiv.appendChild(card);
+                });
+                searchAgainBtn.style.display = 'block';
+            }
+        });
+        
+        document.getElementById('search-again-button').addEventListener('click', () => {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('results').classList.remove('visible');
+            document.getElementById('recommendation-heading').textContent = '';
+            document.getElementById('recommendation-heading').style.display = 'none';
+            document.getElementById('listInput').value = '';
+            document.getElementById('search-again-container').style.display = 'none';
+        });
     </script>
+        
 </body>
 </html>
