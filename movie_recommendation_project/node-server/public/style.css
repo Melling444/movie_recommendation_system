@@ -105,3 +105,11 @@ h1, h3 {
     grid-column: 1 / -1;
     margin-top: 20px;
 }
+
+.error-message {
+    color: White;
+    font-size: 25px;
+    text-align: center;
+    grid-column: 1 / -1;
+    font-weight: bold;
+}
