@@ -142,7 +142,7 @@ def get_recommendations(title, cosine_sim = cosine_sim):
     invalid_titles = [t for t in normalize_titles if t not in indices.index]
 
     if not valid_titles:
-        return {"error": "Movie not found"}
+        return {"error": "Movie(s) not found"}
     new = []
     for i in valid_titles:
         idx = indices[i]
@@ -213,6 +213,9 @@ def recommend():
     input_list = [item.strip() for item in input_string.split(',')]
     result = get_recommendations(title=input_list, cosine_sim=cosine_sim2)
 
+    if 'error' in result:
+        return jsonify(result)
+    
     response = {
         "recommendations": result.get("recommendations", []),
         "used_titles": result.get("used_titles", [])
