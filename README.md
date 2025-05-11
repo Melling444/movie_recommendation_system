@@ -5,7 +5,7 @@ End-to-End movie recommendation system built on a web-scraped database from rott
 
 To start the project, simply clone the github repository and, assuming you have the docker cli installed, navigate to the folder "movie_recommendation_project" and run a docker-compose up --build in the command line. Then, navigate to http://localhost:3000/ in the web browser to use the recommender.
 
-You may also be able to open a browser and navigate to [""](https://movie-recommendation-project-hprp.onrender.com/). I hosted this through Render for those who are not as savy with containerized images!
+You may also be able to open a browser and navigate to [this link](https://movie-recommendation-project-hprp.onrender.com/). I hosted this project through Render for those who are not as savy with containerized images!
 
 ![image](https://github.com/user-attachments/assets/03c09d85-07c0-4720-a9ff-56d0ebc4b174)
 
