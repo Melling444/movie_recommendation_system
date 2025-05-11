@@ -1,9 +1,11 @@
 # movie_recommendation_system
 End-to-End movie recommendation system built on a web-scraped database from rotten tomatoes
 
+![image](https://github.com/user-attachments/assets/1d73346a-0e49-4606-8cf7-f2872de8ca0e)
+
 To start the project, simply clone the github repository and, assuming you have the docker cli installed, navigate to the folder "movie_recommendation_project" and run a docker-compose up --build in the command line. Then, navigate to http://localhost:3000/ in the web browser to use the recommender.
 
-![image](https://github.com/user-attachments/assets/1d73346a-0e49-4606-8cf7-f2872de8ca0e)
+You may also be able to open a browser and navigate to [""](https://movie-recommendation-project-hprp.onrender.com/). I hosted this through Render for those who are not as savy with containerized images!
 
 ![image](https://github.com/user-attachments/assets/03c09d85-07c0-4720-a9ff-56d0ebc4b174)
 
