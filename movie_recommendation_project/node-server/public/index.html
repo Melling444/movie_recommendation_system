@@ -58,10 +58,12 @@
         
             // Show error if any
             if (data.error) {
-                resultDiv.innerHTML = `<p>${data.error}</p>`;
+                heading.textContent = "Error!";
+                heading.style.display = 'block';
+                resultDiv.innerHTML = `<p class = "error-message">${data.error}</p>`;
                 searchAgainBtn.style.display = 'block';
                 return;
-            }
+}
         
             // ✅ Pull used_titles safely
             const usedTitles = data.used_titles || [];
